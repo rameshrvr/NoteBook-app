@@ -1,0 +1,47 @@
+<h2 style='text-align: center;'>All Notes</h2>
+
+<br><br>
+
+<div class="home">
+
+  <div class="home_info">
+    <span><%= @notes.length %> Notes</span>
+    <%= link_to "Create Note", new_note_path, class: "pri_btn" %>
+  </div>
+
+  <% unless @notes.empty? %>
+    <% @notes.each do |note| %>
+      <div class="note">
+        <div class="note_header common_header">
+          <div class="note_h_left">
+            <span class="note_username">You..</span>
+            <span class='note_time'><%= note.created_at %></span>
+          </div>
+        </div>
+        <div class="note_title">
+          <span><%= note.title %></span>
+        </div>
+        <div class="note_content">
+          <span><%= note.description %></span>
+        </div>
+        <div class="note_actions">
+          <%= link_to "Edit", edit_note_path(note.id), class: "sec_btn" %>
+          <%=
+            link_to "Delete",
+            note, class: "sec_btn",
+            :data => { :confirm => "Are you sure you want to delete the note?" },
+            :method => :delete
+          %>
+          <%= link_to "View", note, class: "pri_btn" %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if @notes.empty? %>
+    <div class='home_last_mssg'>
+      <span>No notes for you. Go ahead and create one!!</span>
+    </div>
+  <% end %>
+
+</div>

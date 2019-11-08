@@ -1,0 +1,35 @@
+
+<div class="edit" id="default_form">
+  <%= form_with(model: note, local: true) do |form| %>
+    <% if note.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(note.errors.count, "error") %> prohibited this note from being saved:</h2>
+
+        <ul>
+          <% note.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="eu_div">
+      <%= form.label :title %>
+      <%= form.text_field :title, class: "e_username", placeholder: 'Title' %>
+    </div>
+
+    <div class="eb_div">
+      <%= form.label :description %>
+      <%= form.text_area :description, class: "e_bio", placeholder: 'Description' %>
+    </div>
+
+    <div class="eb_btns">
+      <%= form.submit 'Create Note', id: 'common_note_button' %>
+    </div>
+
+    <div class="eb_back">
+      <%= link_to 'Back', notes_path, class: "sec_btn blog_dlt" %>
+    </div>
+
+  <% end %>
+</div>
