@@ -36,7 +36,10 @@
           </div>
 
           <div class="container-login100-form-btn">
-            <%= form.submit "Sign Up", class: "login100-form-btn" %>
+            <%=
+              form.submit "Sign Up", class: "login100-form-btn",
+              :data => { :confirm => "User created successfully. Please LogIn" }
+            %>
           </div>
         <% end %>
       </div>
