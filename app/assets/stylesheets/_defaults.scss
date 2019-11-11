@@ -108,6 +108,8 @@ input[type="submit"]:disabled, input[type="button"]:disabled{
   border-radius: 3px;
   cursor: pointer;
   font-weight: 600;
+  font-size: 16px;
+  float: left;
   outline: none;
   &:hover{
     color: $dark;

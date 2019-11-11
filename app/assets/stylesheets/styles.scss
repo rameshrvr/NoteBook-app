@@ -182,17 +182,6 @@ body {
 
   }
 
-  & .eb_back{
-    text-align: left;
-    
-    & input[type="submit"]{
-      display: inline-block;
-      margin-right: 38px;
-      padding: 7px 20px;
-      font-size: 14px;
-    }
-  }
-
   & .edit_span{
     color: $d_light;
     display: block;
