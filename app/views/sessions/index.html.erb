@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Login Page</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<style> 
+</style>
+<body>
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<%= form_with(controller: session, class: 'login100-form validate-form') do |form| %>
+
+					<span class="login100-form-title p-b-34 p-t-27">
+						Log in
+					</span>
+
+					<div class="wrap-input100">
+						<%= form.text_field :email, class: "input100", placeholder: 'Email'%>
+					</div>
+
+					<div class="wrap-input100">
+						<%= form.password_field :password, class: "input100", placeholder: 'Password'%>
+					</div>
+
+					<div class="container-login100-form-btn">
+						<%= form.submit "Login", class: "login100-form-btn" %>
+					</div>
+				<% end %>
+
+					<div class="text-center p-t-90">
+						<a class="txt1" href="/user_profiles/new">
+							New User? Sign Up...
+						</a>
+						</button>
+					</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

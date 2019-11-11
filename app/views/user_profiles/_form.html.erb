@@ -1,37 +1,44 @@
-<%= form_with(model: user_profile, local: true) do |form| %>
-  <% if user_profile.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(user_profile.errors.count, "error") %> prohibited this user_profile from being saved:</h2>
+<div class="limiter">
+    <div class="container-login100">
+      <div class="wrap-login100">
+        <%= form_with(model: user_profile, local: true, class: 'login100-form validate-form') do |form| %>
 
-      <ul>
-        <% user_profile.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
+          <% if user_profile.errors.any? %>
+            <div id="error_explanation">
+              <h2><%= pluralize(user_profile.errors.count, "error") %> prohibited this user_profile from being saved:</h2>
+
+              <ul>
+              <% user_profile.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <span class="login100-form-title p-b-34 p-t-27">
+            Sign Up
+          </span>
+
+          <div class="wrap-input100">
+            <%= form.text_field :name, class: "input100", placeholder: 'Name'%>
+          </div>
+
+          <div class="wrap-input100">
+            <%= form.text_field :email, class: "input100", placeholder: 'Email'%>
+          </div>
+
+          <div class="wrap-input100">
+            <%= form.password_field :password, class: "input100", placeholder: 'Password'%>
+          </div>
+
+          <div class="wrap-input100">
+            <%= form.password_field :password_confirmation, class: "input100", placeholder: 'Confirm Password'%>
+          </div>
+
+          <div class="container-login100-form-btn">
+            <%= form.submit "Sign Up", class: "login100-form-btn" %>
+          </div>
         <% end %>
-      </ul>
+      </div>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
   </div>
-
-  <div class="field">
-    <%= form.label :email %>
-    <%= form.text_field :email %>
-  </div>
-
-  <div class="field">
-    <%= form.label :password %>
-    <%= form.password_field :password %>
-  </div>
-
-  <div class="field">
-    <%= form.label :password_confirmation %>
-    <%= form.password_field :password_confirmation %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-<% end %>

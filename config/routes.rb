@@ -1,9 +1,14 @@
 Rails.application.routes.draw do
 
+  # get 'sessions/new'
+  # get 'sessions/create'
+  # get 'sessions/destroy'
+  get 'home/index'
   resources :user_profiles
   resources :notes
+  resources :sessions
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 
-  root "notes#index"
+  root "sessions#index"
 
 end
