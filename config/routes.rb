@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   # get 'sessions/create'
   # get 'sessions/destroy'
   get 'home/index'
+  get 'sessions/logout_user'
   resources :user_profiles
   resources :notes
   resources :sessions

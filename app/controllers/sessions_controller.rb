@@ -8,19 +8,22 @@ class SessionsController < ApplicationController
 
   def create
     user = UserProfile.find_by_email(params[:email])
-    puts "User: #{user}"
     if user && user.authenticate(params[:password])
-    	puts "Inside if block"
       session[:user_id] = user.id
       redirect_to "/notes", notice: "Logged in!"
     else
-    	puts "Inside else block"
       redirect_to "/sessions", notice: "Email or password is invalid"
     end
   end
 
   def destroy
     session[:user_id] = nil
+    puts "Inside destroy"
+    redirect_to root_url, notice: "Logged out!"
+  end
+
+  def logout_user
+  	session[:user_id] = nil
     redirect_to root_url, notice: "Logged out!"
   end
 end
