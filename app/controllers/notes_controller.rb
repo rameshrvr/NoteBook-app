@@ -1,5 +1,6 @@
 class NotesController < ApplicationController
   before_action :set_note, only: [:show, :edit, :update, :destroy]
+  before_action :validate_user_login
 
   # GET /notes
   # GET /notes.json
@@ -82,5 +83,17 @@ class NotesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def note_params
       params.require(:note).permit(:title, :description)
+    end
+
+    # Check for valid session id
+    def logged_in?
+      !session[:user_id].nil?
+    end
+
+    def validate_user_login
+      unless logged_in?
+        flash[:danger] = "Please log in."
+        redirect_to root_url
+      end
     end
 end
