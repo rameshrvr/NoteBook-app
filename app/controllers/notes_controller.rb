@@ -62,6 +62,17 @@ class NotesController < ApplicationController
     end
   end
 
+  # GET /notes/1/send_mail
+  def send_mail
+    @note_details = Note.find(params[:id])
+    @user_details = UserProfile.find(session[:user_id])
+    NotesMailer.with(notes: @note_details, user: @user_details).send_notes_to_user.deliver_later
+
+    respond_to do |format|
+      format.html { redirect_to notes_url, notice: 'Email successfully sent.' }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_note

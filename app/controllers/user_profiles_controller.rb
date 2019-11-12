@@ -28,6 +28,7 @@ class UserProfilesController < ApplicationController
 
     respond_to do |format|
       if @user_profile.save
+        NotesMailer.with(user: @user_profile).signup_email.deliver_later
         format.html { redirect_to root_url, notice: 'User profile was successfully created.' }
         format.json { render :show, status: :created, location: @user_profile }
       else

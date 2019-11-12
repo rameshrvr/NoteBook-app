@@ -20,6 +20,7 @@
           :data => { :confirm => "Are you sure you want to delete the note?" },
           :method => :delete
         %>
+        <%= link_to 'Send in Email', send_mail_note_path(@note.id), :method => :get, class: "sec_btn" %>
         <%= link_to "Back", notes_path, class: 'pri_btn' %>
       </div>
     </div>
