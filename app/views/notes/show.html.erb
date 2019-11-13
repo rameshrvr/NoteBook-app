@@ -13,13 +13,15 @@
         <span class="blog_content"><%= @note.description %></span>
       </div>
       <div class="blog_actions">
-        <%= link_to "Edit", edit_note_path(@note.id), class: "sec_btn" %>
-        <%=
-          link_to "Delete",
-          @note, class: "sec_btn blog_dlt",
-          :data => { :confirm => "Are you sure you want to delete the note?" },
-          :method => :delete
-        %>
+        <% if @note.created_by.to_s.eql? session[:user_id].to_s %>
+          <%= link_to "Edit", edit_note_path(@note.id), class: "sec_btn" %>
+          <%=
+            link_to "Delete",
+            @note, class: "sec_btn blog_dlt",
+            :data => { :confirm => "Are you sure you want to delete the note?" },
+            :method => :delete
+          %>
+        <% end %>
         <%= link_to 'Send in Email', send_mail_note_path(@note.id), :method => :get, class: "sec_btn" %>
         <%= link_to "Back", notes_path, class: 'pri_btn' %>
       </div>

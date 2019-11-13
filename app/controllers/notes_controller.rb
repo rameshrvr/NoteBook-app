@@ -1,11 +1,21 @@
 class NotesController < ApplicationController
   before_action :set_note, only: [:show, :edit, :update, :destroy]
   before_action :validate_user_login
+  before_action :validate_user, only: [:show, :edit, :update, :destroy]
+  before_action :prevent_modify, only: [:edit, :update, :destroy]
 
   # GET /notes
   # GET /notes.json
   def index
-    @notes = Note.where(created_by: session[:user_id]).all
+    @notes = Note.where('created_by = ? or public_view = ?', session[:user_id], true)
+    # Get usernames for public note
+    @user_names = {}
+    @notes.each do |note|
+      unless note.created_by.to_s.eql? session[:user_id].to_s
+        user_details = UserProfile.find(note.created_by)
+        @user_names[user_details.id.to_s] = user_details.name
+      end
+    end
   end
 
   # GET /notes/1
@@ -101,6 +111,28 @@ class NotesController < ApplicationController
       unless logged_in?
         flash[:danger] = "Please log in."
         redirect_to root_url
+      end
+    end
+
+    def validate_user
+      note_details = Note.find(params[:id])
+      if note_details.public_view.eql? false
+        unless note_details.created_by.to_s.eql?(session[:user_id].to_s)
+          render(
+            html: "<script>alert('Access Denied!')</script>".html_safe,
+            layout: 'application'
+          )
+        end
+      end
+    end
+
+    def prevent_modify
+      note_details = Note.find(params[:id])
+      unless note_details.created_by.to_s.eql?(session[:user_id].to_s)
+        render(
+          html: "<script>alert('Access Denied!')</script>".html_safe,
+          layout: 'application'
+        )
       end
     end
 end

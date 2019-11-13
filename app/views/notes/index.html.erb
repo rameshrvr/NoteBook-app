@@ -15,7 +15,11 @@
       <div class="note">
         <div class="note_header common_header">
           <div class="note_h_left">
-            <span class="note_username">You..</span>
+            <% if note.created_by.to_s.eql? session[:user_id].to_s %>
+              <span class="note_username">Created By: You..</span>
+            <% else %>
+              <span class="note_username">Created By: <%= @user_names[note.created_by.to_s] %></span>
+            <% end %>
             <span class='note_time'><%= note.created_at %></span>
           </div>
         </div>
@@ -26,18 +30,24 @@
           <span><%= note.description %></span>
         </div>
         <div class="note_actions">
-          <%= link_to "Edit", edit_note_path(note.id), class: "sec_btn" %>
-          <%=
-            link_to "Delete",
-            note, class: "sec_btn",
-            :data => { :confirm => "Are you sure you want to delete the note?" },
-            :method => :delete
-          %>
-          <label class="switch"><input type="checkbox" checked id="togBtn_<%= note.id %>" onchange="toggleSwitch(this.id)">
-            <div class="slider round">
-              <span class="on">Priavte</span><span class="off">Public</span>
-            </div>
-          </label>
+          <% if note.created_by.to_s.eql? session[:user_id].to_s %>
+            <%= link_to "Edit", edit_note_path(note.id), class: "sec_btn" %>
+            <%=
+              link_to "Delete",
+              note, class: "sec_btn",
+              :data => { :confirm => "Are you sure you want to delete the note?" },
+              :method => :delete
+            %>
+            <% if note.public_view.eql? false %>
+              <label class="switch"><input type="checkbox" checked id="togBtn_<%= note.id %>" onchange="toggleSwitch(this.id)">
+            <% else %>
+              <label class="switch"><input type="checkbox" unchecked id="togBtn_<%= note.id %>" onchange="toggleSwitch(this.id)">
+            <% end %>
+              <div class="slider round">
+                <span class="on">Priavte</span><span class="off">Public</span>
+              </div>
+            </label>
+          <% end %>
           <%= link_to "View", note, class: "pri_btn" %>
         </div>
       </div>
