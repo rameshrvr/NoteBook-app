@@ -1,5 +1,5 @@
 <h2 style='text-align: center;'>All Notes</h2>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <%= render 'logout' %>
 <br><br>
 
@@ -33,6 +33,11 @@
             :data => { :confirm => "Are you sure you want to delete the note?" },
             :method => :delete
           %>
+          <label class="switch"><input type="checkbox" checked id="togBtn_<%= note.id %>" onchange="toggleSwitch(this.id)">
+            <div class="slider round">
+              <span class="on">Priavte</span><span class="off">Public</span>
+            </div>
+          </label>
           <%= link_to "View", note, class: "pri_btn" %>
         </div>
       </div>
@@ -46,3 +51,23 @@
   <% end %>
 
 </div>
+
+<script type="text/javascript">
+  function toggleSwitch(toggle_id) {
+    var note_id = toggle_id.split('_')[1];
+    var checked = document.getElementById(toggle_id).checked;
+    var payLoad = { "id": note_id, "public_view": checked };
+
+    var ajax = function() {
+      $.ajax({
+        type: 'GET',
+        url: 'notes/update_visibility',
+        data: payLoad,
+        success: function(){
+          console.log("success");
+        }
+      });
+    }
+    ajax();
+  }
+</script>

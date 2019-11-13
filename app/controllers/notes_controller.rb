@@ -74,6 +74,13 @@ class NotesController < ApplicationController
     end
   end
 
+  # GET /notes/update_visibility
+  def update_visibility
+    note_obj = Note.find(params[:id])
+    converted_value = ActiveModel::Type::Boolean.new.cast(params[:public_view])
+    note_obj.update_attribute :public_view, !converted_value
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_note

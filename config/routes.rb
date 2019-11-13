@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   get 'sessions/logout_user'
+  get 'notes/update_visibility'
 
   resources :user_profiles
 
