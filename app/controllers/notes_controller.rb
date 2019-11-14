@@ -21,6 +21,9 @@ class NotesController < ApplicationController
   # GET /notes/1
   # GET /notes/1.json
   def show
+    if @note.public_view
+      @comments = Comment.where('note_id = ?', params[:id])
+    end
   end
 
   # GET /notes/new
@@ -89,6 +92,15 @@ class NotesController < ApplicationController
     note_obj = Note.find(params[:id])
     converted_value = ActiveModel::Type::Boolean.new.cast(params[:public_view])
     note_obj.update_attribute :public_view, !converted_value
+  end
+
+  # POST /notes/1/create_comment
+  def create_comment
+    comment = Comment.new
+    comment.note_id = params[:id]
+    comment.created_by = session[:user_id]
+    comment.description = params[:comment]
+    comment.save
   end
 
   private

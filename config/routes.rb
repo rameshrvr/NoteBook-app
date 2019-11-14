@@ -2,10 +2,13 @@ Rails.application.routes.draw do
 
   get 'sessions/logout_user'
   get 'notes/update_visibility'
+  get 'notes/create_comment'
 
   resources :user_profiles
 
   resources :sessions
+
+  # resources :comments
 
   resources :notes do
     member do

@@ -1,6 +1,7 @@
 
 <h2 style='text-align: center;'>View Note</h2>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <%= render 'logout' %>
 
 <div class="notes_wrapper">
@@ -29,3 +30,73 @@
 
   </div>
 </div>
+
+<% if @note.public_view %>
+
+  <nav>
+  <ul class="comment-section">
+
+  <% @comments.each do |single_commnet| %>
+    <% if single_commnet.created_by.to_s.eql? session[:user_id].to_s %>
+
+      <li class="comment author-comment">
+        <div class="info">
+          <a href="#" style='color: black'>You...</a>
+          <span style='color: white'><%= single_commnet.created_at %></span>
+        </div>
+        <p><%= single_commnet.description %></p>
+      </li>
+
+    <% else %>
+
+      <li class="comment user-comment">
+        <div class="info">
+          <a href="#" style='color: black'>They</a>
+          <span style='color: white'><%= single_commnet.created_at %></span>
+        </div>
+        <p><%= single_commnet.description %></p>
+      </li>
+
+    <% end %>
+
+  <% end %>
+  </ul>
+  </nav>
+
+  <ul>
+  <li class="write-new">
+      <form>
+          <textarea placeholder="Write your comment here" id="comments_area"></textarea>
+          <div>
+              <button type="submit" onclick="submitComment()">Submit</button>
+          </div>
+      </form>
+  </li>
+  </ul>
+<% end %>
+
+
+<script type="text/javascript">
+  function submitComment() {
+    var note_id = <%= @note.id %>;
+    var comment = document.getElementById('comments_area').value;
+    var payLoad = { "id": note_id, "comment": comment };
+
+    var ajax = function() {
+      $.ajax({
+        type: 'GET',
+        url: 'create_comment',
+        data: payLoad,
+        success: function(){
+          console.log("success");
+        }
+      });
+    }
+    ajax();
+  }
+</script>
+
+<style type="text/css">
+nav ul{height:300px; width:18%;}
+nav ul{overflow:hidden; overflow-y:scroll;}
+</style>
