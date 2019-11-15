@@ -1,66 +1,111 @@
 <h2 style='text-align: center;'>All Notes</h2>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+<style type="text/css">
+nav ul{height:650px; width:100%;}
+nav ul{overflow:hidden; overflow-y:scroll;}
+</style>
 <%= render 'logout' %>
 <br><br>
 
 <div class="home">
-
   <div class="home_info">
     <span><%= @notes.length %> Notes</span>
     <%= link_to "Create Note", new_note_path, class: "pri_btn" %>
   </div>
-
-  <% unless @notes.empty? %>
-    <% @notes.each do |note| %>
-      <div class="note">
-        <div class="note_header common_header">
-          <div class="note_h_left">
-            <% if note.created_by.to_s.eql? session[:user_id].to_s %>
+  <nav>
+    <ul>
+      <% unless @notes.empty? %>
+      <% @notes.each do |note| %>
+      <li>
+        <div class="note">
+          <div class="note_header common_header">
+            <div class="note_h_left">
+              <% if note.created_by.to_s.eql? session[:user_id].to_s %>
               <span class="note_username">Created By: You..</span>
-            <% else %>
+              <% else %>
               <span class="note_username">Created By: <%= @user_names[note.created_by.to_s] %></span>
-            <% end %>
-            <span class='note_time'><%= note.created_at %></span>
+              <% end %>
+              <span class='note_time'><%= note.created_at %></span>
+            </div>
           </div>
-        </div>
-        <div class="note_title">
-          <span><%= note.title %></span>
-        </div>
-        <div class="note_content">
-          <span><%= note.description %></span>
-        </div>
-        <div class="note_actions">
-          <% if note.created_by.to_s.eql? session[:user_id].to_s %>
+          <div class="note_title">
+            <span><%= note.title %></span>
+          </div>
+          <div class="note_content">
+            <span><%= note.description %></span>
+          </div>
+          <div class="note_actions">
+            <% if note.created_by.to_s.eql? session[:user_id].to_s %>
             <%= link_to "Edit", edit_note_path(note.id), class: "sec_btn" %>
             <%=
-              link_to "Delete",
-              note, class: "sec_btn",
-              :data => { :confirm => "Are you sure you want to delete the note?" },
-              :method => :delete
+            link_to "Delete",
+            note, class: "sec_btn",
+            :data => { :confirm => "Are you sure you want to delete the note?" },
+            :method => :delete
             %>
             <% if note.public_view.eql? false %>
-              <label class="switch"><input type="checkbox" checked id="togBtn_<%= note.id %>" onchange="toggleSwitch(this.id)">
+            <label class="switch"><input type="checkbox" checked id="togBtn_<%= note.id %>" onchange="toggleSwitch(this.id)">
             <% else %>
-              <label class="switch"><input type="checkbox" unchecked id="togBtn_<%= note.id %>" onchange="toggleSwitch(this.id)">
+            <label class="switch"><input type="checkbox" unchecked id="togBtn_<%= note.id %>" onchange="toggleSwitch(this.id)">
             <% end %>
-              <div class="slider round">
-                <span class="on">Priavte</span><span class="off">Public</span>
-              </div>
-            </label>
+            <div class="slider round">
+              <span class="on">Priavte</span><span class="off">Public</span>
+            </div>
+          </label>
           <% end %>
           <%= link_to "View", note, class: "pri_btn" %>
         </div>
+        <% if note.created_by.to_s.eql? session[:user_id].to_s %>
+        <div class="note_share">
+          <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">Share With</button>
+        </div>
+        <% end %>
       </div>
+    </li>
     <% end %>
-  <% end %>
-
-  <% if @notes.empty? %>
-    <div class='home_last_mssg'>
-      <span>No notes for you. Go ahead and create one!!</span>
-    </div>
-  <% end %>
-
+    <% end %>
+  </ul>
+</nav>
+<% if @notes.empty? %>
+<div class='home_last_mssg'>
+  <span>No notes for you. Go ahead and create one!!</span>
 </div>
+<% end %>
+</div>
+
+
+
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+      
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Select users with whom you want to share</h4>
+        </div>
+        <div class="modal-body" id='user_select_box'>
+          <% @all_users.each do |each_user| %>
+            <input type="checkbox" name="<%= each_user.name %>"> <strong><%= each_user.name %></strong><br>
+          <% end %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" style='float: left;' class="btn btn-default" data-dismiss="modal" onclick="shareNote()">Submit</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>
+
 
 <script type="text/javascript">
   function toggleSwitch(toggle_id) {
@@ -79,5 +124,14 @@
       });
     }
     ajax();
+  }
+
+  function shareNote() {
+    var selected_boxes = [];
+    $('#user_select_box input:checked').each(function() {
+      selected_boxes.push($(this).attr('name'));
+    });
+    console.log(selected_boxes);
+
   }
 </script>

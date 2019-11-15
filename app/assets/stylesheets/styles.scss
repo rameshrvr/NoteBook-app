@@ -116,6 +116,11 @@ body {
     }
 
   }
+
+  & .note_share {
+    position: relative;
+    float: right;
+  }
 }
 
 .page_end{
@@ -359,11 +364,12 @@ html{
 }
 
 .comment.user-comment .info{
-    text-align: right;
+    text-align: left;
 }
 
 .comment.author-comment .info{
     order: 3;
+    text-align: right;
 }
 
 

@@ -16,6 +16,8 @@ class NotesController < ApplicationController
         @user_names[user_details.id.to_s] = user_details.name
       end
     end
+
+    @all_users = UserProfile.where('not id = ?', session[:user_id])
   end
 
   # GET /notes/1
@@ -23,6 +25,20 @@ class NotesController < ApplicationController
   def show
     if @note.public_view
       @comments = Comment.where('note_id = ?', params[:id])
+      others_comment_ids = []
+      # Get the user ids from all comments for a note
+      @comments.each do |single_comment|
+        unless single_comment.created_by.to_s.eql? session[:user_id].to_s
+          others_comment_ids.push(single_comment.created_by)
+        end
+      end
+      ###
+      @user_names = {}
+      ###
+      user_details = UserProfile.where('id in (?)', others_comment_ids)
+      user_details.each do |detail|
+        @user_names[detail.id.to_s] = detail.name
+      end
     end
   end
 
@@ -104,42 +120,31 @@ class NotesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_note
-      @note = Note.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_note
+    @note = Note.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def note_params
-      params.require(:note).permit(:title, :description)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def note_params
+    params.require(:note).permit(:title, :description)
+  end
 
-    # Check for valid session id
-    def logged_in?
-      !session[:user_id].nil?
-    end
+  # Check for valid session id
+  def logged_in?
+    !session[:user_id].nil?
+  end
 
-    def validate_user_login
-      unless logged_in?
-        flash[:danger] = "Please log in."
-        redirect_to root_url
-      end
+  def validate_user_login
+    unless logged_in?
+      flash[:danger] = "Please log in."
+      redirect_to root_url
     end
+  end
 
-    def validate_user
-      note_details = Note.find(params[:id])
-      if note_details.public_view.eql? false
-        unless note_details.created_by.to_s.eql?(session[:user_id].to_s)
-          render(
-            html: "<script>alert('Access Denied!')</script>".html_safe,
-            layout: 'application'
-          )
-        end
-      end
-    end
-
-    def prevent_modify
-      note_details = Note.find(params[:id])
+  def validate_user
+    note_details = Note.find(params[:id])
+    if note_details.public_view.eql? false
       unless note_details.created_by.to_s.eql?(session[:user_id].to_s)
         render(
           html: "<script>alert('Access Denied!')</script>".html_safe,
@@ -147,4 +152,15 @@ class NotesController < ApplicationController
         )
       end
     end
+  end
+
+  def prevent_modify
+    note_details = Note.find(params[:id])
+    unless note_details.created_by.to_s.eql?(session[:user_id].to_s)
+      render(
+        html: "<script>alert('Access Denied!')</script>".html_safe,
+        layout: 'application'
+      )
+    end
+  end
 end

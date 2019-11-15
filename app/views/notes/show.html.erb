@@ -51,7 +51,7 @@
 
       <li class="comment user-comment">
         <div class="info">
-          <a href="#" style='color: black'>They</a>
+          <a href="#" style='color: black'><%= @user_names[single_commnet.created_by] %></a>
           <span style='color: white'><%= single_commnet.created_at %></span>
         </div>
         <p><%= single_commnet.description %></p>
