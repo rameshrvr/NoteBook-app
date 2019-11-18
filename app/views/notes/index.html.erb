@@ -1,8 +1,21 @@
 <h2 style='text-align: center;'>All Notes</h2>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<style type="text/css">
+  .btn-sm {
+    padding:5px 10px;
+    font-size:12px;
+    line-height:1.5;
+    border-radius:3px;
+  }
+
+  .btn-info {
+    position:relative;
+    top: 8px;
+    color:#fff;
+    background-color:#5bc0de;
+    border-color:#46b8da
+  }
+</style>
 
 <style type="text/css">
 nav ul{height:650px; width:100%;}
@@ -59,12 +72,11 @@ nav ul{overflow:hidden; overflow-y:scroll;}
           <% end %>
           <%= link_to "View", note, class: "pri_btn" %>
         </div>
-        <% if note.created_by.to_s.eql? session[:user_id].to_s %>
+        <% if note.created_by.to_s.eql?(session[:user_id].to_s) and !note.public_view %>
         <div class="note_share">
-          <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">Share With</button>
+          <%= link_to 'Share With', popup_note_path(note.id), class: "btn btn-info btn-sm" %>
         </div>
         <% end %>
-      </div>
     </li>
     <% end %>
     <% end %>
@@ -75,35 +87,6 @@ nav ul{overflow:hidden; overflow-y:scroll;}
   <span>No notes for you. Go ahead and create one!!</span>
 </div>
 <% end %>
-</div>
-
-
-
-<div class="container">
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-      
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Select users with whom you want to share</h4>
-        </div>
-        <div class="modal-body" id='user_select_box'>
-          <% @all_users.each do |each_user| %>
-            <input type="checkbox" name="<%= each_user.name %>"> <strong><%= each_user.name %></strong><br>
-          <% end %>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" style='float: left;' class="btn btn-default" data-dismiss="modal" onclick="shareNote()">Submit</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-  
 </div>
 
 
@@ -126,12 +109,4 @@ nav ul{overflow:hidden; overflow-y:scroll;}
     ajax();
   }
 
-  function shareNote() {
-    var selected_boxes = [];
-    $('#user_select_box input:checked').each(function() {
-      selected_boxes.push($(this).attr('name'));
-    });
-    console.log(selected_boxes);
-
-  }
 </script>

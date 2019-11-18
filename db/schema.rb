@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_14_092303) do
+ActiveRecord::Schema.define(version: 2019_11_15_093035) do
 
   create_table "comments", force: :cascade do |t|
     t.text "description", null: false
@@ -27,6 +27,13 @@ ActiveRecord::Schema.define(version: 2019_11_14_092303) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "created_by"
     t.boolean "public_view"
+  end
+
+  create_table "share_notes", force: :cascade do |t|
+    t.integer "note_id", null: false
+    t.integer "user_profile_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "user_profiles", force: :cascade do |t|

@@ -31,7 +31,7 @@
   </div>
 </div>
 
-<% if @note.public_view %>
+<% if @note.public_view or @shared_user_ids.include?(session[:user_id]) or (!@note.public_view and @shared_user_ids.any?) %>
 
   <nav>
   <ul class="comment-section">
@@ -68,7 +68,7 @@
       <form>
           <textarea placeholder="Write your comment here" id="comments_area"></textarea>
           <div>
-              <button type="submit" onclick="submitComment()">Submit</button>
+              <button onclick="submitComment()">Submit</button>
           </div>
       </form>
   </li>

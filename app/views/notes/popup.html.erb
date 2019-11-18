@@ -1,0 +1,52 @@
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<div class="notes_wrapper">
+  <div class="home">
+    <div class="blog">
+      <div class="blog_c">
+        <span class="blog_title">Select users with whom you want to share</span>
+        <br>
+        <span class="blog_content">
+          <div class="modal-body" id='user_select_box'>
+            <% @all_users.each do |each_user| %>
+            <% if @shared_users.include?(each_user.id) %>
+            <input type="checkbox" checked id="<%= each_user.id %>">&nbsp; &nbsp; <strong><%= each_user.name %></strong><br>
+            <% else %>
+            <input type="checkbox" unchecked id="<%= each_user.id %>">&nbsp; &nbsp; <strong><%= each_user.name %></strong><br>
+            <% end %>
+            <% end %>
+          </div>
+        </span>
+      </div>
+      <div class="blog_actions">
+        <button type="button" style='float: left; color: blue;' class="sec_btn" name='share_note' onclick="shareNote(<%= @note.id %>)">Submit</button>
+        <%= link_to "Back", notes_path, class: 'pri_btn' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  function shareNote(note_id) {
+    var selected_boxes = [];
+    $('#user_select_box input:checked').each(function() {
+      selected_boxes.push($(this).attr('id'));
+    });
+
+    var ajax = function() {
+      $.ajax({
+        type: 'GET',
+        url: 'share_notes',
+        data: { note_id: note_id, user_ids: selected_boxes },
+        success: function(result){
+          console.log("success");
+          window.location = result.location;
+        }
+      });
+    }
+    ajax();
+  }
+</script>

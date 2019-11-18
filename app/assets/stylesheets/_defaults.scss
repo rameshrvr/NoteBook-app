@@ -84,6 +84,8 @@ input[type="text"]:focus,input[type="password"]:focus, input[type="email"]:focus
 }
 
 input[type="submit"],input[type="button"],.pri_btn{
+  position: relative;
+  top: -12px;
   font-weight: 600;
   background: $pric;
   border: 1px solid $pric;

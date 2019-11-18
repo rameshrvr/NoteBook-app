@@ -1,5 +1,5 @@
 class NotesController < ApplicationController
-  before_action :set_note, only: [:show, :edit, :update, :destroy]
+  before_action :set_note, only: [:show, :edit, :update, :destroy, :popup]
   before_action :validate_user_login
   before_action :validate_user, only: [:show, :edit, :update, :destroy]
   before_action :prevent_modify, only: [:edit, :update, :destroy]
@@ -7,7 +7,13 @@ class NotesController < ApplicationController
   # GET /notes
   # GET /notes.json
   def index
-    @notes = Note.where('created_by = ? or public_view = ?', session[:user_id], true)
+    # Get shared notes for the user
+    @shared_note_ids = ShareNote.where('user_profile_id = ?', session[:user_id]).pluck(:note_id)
+    @notes = Note.where(
+      'created_by = ? or public_view = ? or id in (?)',
+      session[:user_id], true, @shared_note_ids
+    )
+    ###
     # Get usernames for public note
     @user_names = {}
     @notes.each do |note|
@@ -16,14 +22,12 @@ class NotesController < ApplicationController
         @user_names[user_details.id.to_s] = user_details.name
       end
     end
-
-    @all_users = UserProfile.where('not id = ?', session[:user_id])
   end
 
   # GET /notes/1
   # GET /notes/1.json
   def show
-    if @note.public_view
+    if @note.public_view or @shared_user_ids.include?(session[:user_id]) or (!@note.public_view and @shared_user_ids.any?)
       @comments = Comment.where('note_id = ?', params[:id])
       others_comment_ids = []
       # Get the user ids from all comments for a note
@@ -49,6 +53,12 @@ class NotesController < ApplicationController
 
   # GET /notes/1/edit
   def edit
+  end
+
+  # Get /notes/popup
+  def popup
+    @shared_users = ShareNote.where('note_id = ?', params[:id]).pluck(:user_profile_id)
+    @all_users = UserProfile.where('not id = ?', session[:user_id])
   end
 
   # POST /notes
@@ -110,13 +120,41 @@ class NotesController < ApplicationController
     note_obj.update_attribute :public_view, !converted_value
   end
 
-  # POST /notes/1/create_comment
+  # GET /notes/create_comment
   def create_comment
     comment = Comment.new
     comment.note_id = params[:id]
     comment.created_by = session[:user_id]
     comment.description = params[:comment]
     comment.save
+  end
+
+  # GET /notes/1/share_notes
+  def share_notes
+    shared_userids = ShareNote.where('note_id = ?', params[:id]).pluck(:user_profile_id)
+    # Create a mapping in DB with user_id and note_id for each share
+    if !params[:user_ids].nil?
+      params[:user_ids].each do |user_id|
+        unless shared_userids.include?(user_id.to_i)
+          @share = ShareNote.new
+          @share.user_profile_id = user_id
+          @share.note_id = params[:note_id]
+          @share.save
+        else
+          shared_userids.delete(user_id.to_i)
+        end
+      end
+    end
+    # Delete records to unshare note
+    unless shared_userids.empty?
+      shared_userids.each do |delete_user_id|
+        ShareNote.where('note_id = ? and user_profile_id = ?', params[:note_id], delete_user_id).destroy_all
+      end
+    end
+
+    respond_to do |format|
+      format.json { render json: { location: notes_url } }
+    end
   end
 
   private
@@ -144,7 +182,8 @@ class NotesController < ApplicationController
 
   def validate_user
     note_details = Note.find(params[:id])
-    if note_details.public_view.eql? false
+    @shared_user_ids = ShareNote.where('note_id = ?', note_details.id).pluck(:user_profile_id)
+    if note_details.public_view.eql? false and !@shared_user_ids.include?(session[:user_id])
       unless note_details.created_by.to_s.eql?(session[:user_id].to_s)
         render(
           html: "<script>alert('Access Denied!')</script>".html_safe,
