@@ -3,6 +3,7 @@ class NotesController < ApplicationController
   before_action :validate_user_login
   before_action :validate_user, only: [:show, :edit, :update, :destroy]
   before_action :prevent_modify, only: [:edit, :update, :destroy]
+  before_action :prevent_popup_in_public_note, only: [:popup]
 
   # GET /notes
   # GET /notes.json
@@ -196,6 +197,15 @@ class NotesController < ApplicationController
   def prevent_modify
     note_details = Note.find(params[:id])
     unless note_details.created_by.to_s.eql?(session[:user_id].to_s)
+      render(
+        html: "<script>alert('Access Denied!')</script>".html_safe,
+        layout: 'application'
+      )
+    end
+  end
+
+  def prevent_popup_in_public_note
+    if @note.public_view
       render(
         html: "<script>alert('Access Denied!')</script>".html_safe,
         layout: 'application'
